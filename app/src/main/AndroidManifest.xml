@@ -21,8 +21,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data android:name="TA_APPKEY"
+            android:value="A3IK3R1BXK23" />
+        <meta-data android:name="BEACON_MAIN_APPKEY"
+            android:value="0S200MNJT807V3E"/>
+        <meta-data android:name="APPKEY_DENGTA"
+            android:value="0S200MNJT807V3E"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission
+        android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission
+        android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 </manifest>

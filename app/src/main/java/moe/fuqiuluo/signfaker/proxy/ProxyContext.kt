@@ -1,5 +1,6 @@
 package moe.fuqiuluo.signfaker.proxy
 
+import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.ContentResolver
@@ -33,10 +34,10 @@ import java.io.InputStream
 import moe.fuqiuluo.signfaker.logger.TextLogger.log
 
 class ProxyContext(
-    val myContext: Context
-): Context() {
+    private val myContext: Context
+): Application() {
     override fun getAssets(): AssetManager {
-        log("assets")
+        log("getAssets()")
         return myContext.assets
     }
 
@@ -46,12 +47,12 @@ class ProxyContext(
     }
 
     override fun getPackageManager(): PackageManager {
-        log("pm")
-        return myContext.packageManager
+        log("getPackageManager() => Fake")
+        return ProxyPackageManager(myContext.packageManager)
     }
 
     override fun getContentResolver(): ContentResolver {
-        log("cr")
+        log("getContentResolver()")
         return myContext.contentResolver
     }
 
@@ -61,8 +62,8 @@ class ProxyContext(
     }
 
     override fun getApplicationContext(): Context {
-        log("ac")
-        return myContext.applicationContext
+        log("getApplicationContext => this")
+        return this
     }
 
     override fun setTheme(p0: Int) {
@@ -81,7 +82,7 @@ class ProxyContext(
     }
 
     override fun getPackageName(): String {
-        log("pn")
+        log("getPackageName() => \"com.tencent.mobileqq\"")
         return "com.tencent.mobileqq"
     }
 
@@ -101,7 +102,7 @@ class ProxyContext(
     }
 
     override fun getSharedPreferences(p0: String?, p1: Int): SharedPreferences {
-        log("sp")
+        log("getSharedPreferences($p0)")
         return myContext.getSharedPreferences(p0, p1)
     }
 
@@ -229,7 +230,8 @@ class ProxyContext(
     }
 
     override fun getDatabasePath(p0: String?): File {
-        TODO("Not yet implemented")
+        log("getDatabasePath($p0)")
+        return myContext.getDatabasePath(p0)
     }
 
     override fun databaseList(): Array<String> {
@@ -379,8 +381,9 @@ class ProxyContext(
         TODO("Not yet implemented")
     }
 
-    override fun registerReceiver(p0: BroadcastReceiver?, p1: IntentFilter?): Intent? {
-        TODO("Not yet implemented")
+    override fun registerReceiver(receiver: BroadcastReceiver?, intent: IntentFilter): Intent? {
+        log("registerReceiver(${receiver.toString()}, $intent)")
+        return myContext.registerReceiver(receiver, intent)
     }
 
     override fun registerReceiver(p0: BroadcastReceiver?, p1: IntentFilter?, p2: Int): Intent? {
@@ -434,8 +437,9 @@ class ProxyContext(
         TODO("Not yet implemented")
     }
 
-    override fun getSystemService(p0: String): Any {
-        TODO("Not yet implemented")
+    override fun getSystemService(name: String): Any {
+        log("getSystemService($name)")
+        return myContext.getSystemService(name)
     }
 
     override fun getSystemServiceName(p0: Class<*>): String? {

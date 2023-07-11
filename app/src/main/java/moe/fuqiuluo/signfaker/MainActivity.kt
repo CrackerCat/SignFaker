@@ -5,12 +5,15 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.provider.Settings
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.tencent.beacon.event.UserAction
 import com.tencent.mobileqq.channel.ChannelManager
 import com.tencent.mobileqq.channel.ChannelProxy
+import com.tencent.mobileqq.dt.app.Dtc
 import com.tencent.mobileqq.fe.FEKit
 import com.tencent.mobileqq.qsec.qsecurity.QSecConfig
 import com.tencent.qphone.base.BaseConstants
@@ -22,11 +25,17 @@ import moe.fuqiuluo.signfaker.http.HttpServer
 import moe.fuqiuluo.signfaker.logger.TextLogger
 import moe.fuqiuluo.signfaker.logger.TextLogger.log
 import moe.fuqiuluo.signfaker.proxy.ProxyContext
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import java.lang.ref.WeakReference
+import java.security.Security
 import java.util.concurrent.atomic.AtomicBoolean
 
 class MainActivity : AppCompatActivity() {
+    init {
+        Security.addProvider(BouncyCastleProvider())
+    }
+
     private val isInit = AtomicBoolean(false)
-    lateinit var androidId: String
 
     lateinit var input: EditText
     lateinit var send: Button
@@ -63,6 +72,7 @@ class MainActivity : AppCompatActivity() {
 
         var port = 0
         send.setOnClickListener {
+            TextLogger.input(">>> ${input.text}")
             kotlin.runCatching {
                 val myPort = input.text.toString().toInt()
                 if (myPort !in 1000 .. 64000) {
@@ -71,6 +81,7 @@ class MainActivity : AppCompatActivity() {
                     port = myPort
                 }
             }.onFailure {
+                input.setText("")
                 log("错误输入，请重新尝试")
             }
         }
@@ -85,11 +96,44 @@ class MainActivity : AppCompatActivity() {
         HttpServer(port)
     }
 
-    private fun initFEKit() {
-        FEKit.init(ProxyContext(this))
+    private suspend fun initFEKit() {
+        val ctx = ProxyContext(this)
+        Dtc.ctx = WeakReference(ctx)
+        UserAction.initUserAction(ctx, false)
+        UserAction.setAppKey("0S200MNJT807V3E")
+        UserAction.setAppVersion("8.9.68")
+
+        var qimei = ""
+        UserAction.getQimei {
+            log("QIMEI FETCH 成功： $it")
+            qimei = it
+            QSecConfig.business_q36 = it
+        }
+
+        val qua = "V1_AND_SQ_8.9.68_4264_YYB_D"
+
+        val cs = contentResolver
+        log("预设androidId为：${Settings.System.getString(cs, "android_id")}")
+
+        log("请输入你的androidId：")
+        var androidId = ""
+        send.setOnClickListener {
+            TextLogger.input(">>> ${input.text}")
+            androidId = input.text.toString()
+            input.setText("")
+        }
+        while (androidId.isEmpty()) {
+            delay(3000)
+            log("期许输入中 (3s) ...... ")
+        }
+        log("你的androidId输入为[$androidId]")
+        Settings.System.putString(cs, "android_id", androidId)
+        Dtc.androidId = androidId
+
+        FEKit.init(qua, qimei, androidId, ctx)
         ChannelManager.setChannelProxy(object: ChannelProxy() {
             override fun sendMessage(cmd: String, buffer: ByteArray, id: Long) {
-                log("ChannelProxy.send($cmd, $buffer, $id)")
+                log("ChannelProxy.sendMessage($cmd, $buffer, $id)")
             }
         })
         ChannelManager.initReport(QSecConfig.business_qua, "7.0.300", Build.VERSION.RELEASE, Build.BRAND + Build.MODEL, QSecConfig.business_q36, QSecConfig.business_guid)

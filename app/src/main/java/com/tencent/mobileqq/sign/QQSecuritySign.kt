@@ -9,7 +9,7 @@ object QQSecuritySign {
 
     external fun initSafeMode(isSafe: Boolean)
 
-    private external fun getSign(
+    external fun getSign(
         qSec: QSec,
         str: String,
         str2: String,

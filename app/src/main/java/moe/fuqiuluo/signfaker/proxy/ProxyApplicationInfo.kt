@@ -7,8 +7,8 @@ class ProxyApplicationInfo(
     val myApplicationInfo: ApplicationInfo
 ): ApplicationInfo() {
     init {
-        targetSdkVersion = 26
-        log("ProxyApplicationInfo.targetSdkVersion = 26")
+        targetSdkVersion = 28
+        log("ProxyApplicationInfo.targetSdkVersion = $targetSdkVersion")
         nativeLibraryDir = myApplicationInfo.nativeLibraryDir
         log("ProxyApplicationInfo.nativeLibraryDir = ${myApplicationInfo.nativeLibraryDir}")
     }

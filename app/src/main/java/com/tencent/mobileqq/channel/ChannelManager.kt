@@ -5,7 +5,7 @@ import com.tencent.mobileqq.fe.CmdWhiteListChangeCallback
 object ChannelManager {
     external fun initReport(
         str: String,
-        str2: String,
+        channelVersion: String,
         str3: String,
         str4: String,
         str5: String,

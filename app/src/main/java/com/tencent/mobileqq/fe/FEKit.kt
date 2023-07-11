@@ -1,19 +1,24 @@
 package com.tencent.mobileqq.fe
 
+import com.tencent.beacon.event.UserAction
 import com.tencent.mobileqq.dt.Dtn
 import com.tencent.mobileqq.fe.utils.DeepSleepDetector
 import com.tencent.mobileqq.qsec.qsecurity.QSec
+import com.tencent.mobileqq.qsec.qsecurity.QSecConfig
 import com.tencent.mobileqq.sign.QQSecuritySign
 import moe.fuqiuluo.signfaker.logger.TextLogger.log
 import moe.fuqiuluo.signfaker.proxy.ProxyContext
+import moe.fuqiuluo.utils.MD5
 import java.io.File
 
 object FEKit {
-    fun init(proxyContext: ProxyContext) {
+    fun init(qua: String, qimei: String, androidId: String, proxyContext: ProxyContext) {
         kotlin.runCatching {
             log("尝试载入FEKIT二进制库...")
             System.loadLibrary("fekit")
             log("载入FEKIT二进制库成功...")
+
+            QSecConfig.setupBusinessInfo(proxyContext, "0", MD5.toMD5(androidId + "02:00:00:00:00:00"), "", "", qimei, qua)
 
             DeepSleepDetector.startCheck()
 
@@ -60,5 +65,10 @@ object FEKit {
         }
     }
 
+    fun changeUin(uin: Long) {
+        UserAction.setQQ(uin.toString())
+        QSecConfig.business_uin = uin.toString()
+        log("改变Uin = $uin")
 
+    }
 }

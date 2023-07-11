@@ -12,8 +12,8 @@ android {
         applicationId "moe.fuqiuluo.signfaker"
         minSdk 24
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -57,6 +57,9 @@ dependencies {
     implementation "io.ktor:ktor-server-netty:$ktor_version"
     implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
     implementation "io.ktor:ktor-server-content-negotiation:$ktor_version"
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.70'
+
+    implementation files('libs/beacon_android_v3.2.0.3_official64_release.jar')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

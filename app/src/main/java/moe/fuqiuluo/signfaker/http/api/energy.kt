@@ -14,14 +14,17 @@ import moe.fuqiuluo.signfaker.http.ext.hex2ByteArray
 import moe.fuqiuluo.signfaker.http.ext.toHexString
 import moe.fuqiuluo.utils.MD5
 import java.nio.ByteBuffer
+import moe.fuqiuluo.signfaker.logger.TextLogger.log
 
 fun Routing.energy() {
     get("/custom_energy") {
-        val uin = fetchGet("uin")!!.toLong()
         val data = fetchGet("data")!!
         val salt = fetchGet("salt")!!.hex2ByteArray()
 
+        log("API请求(/custom_energy): data = $data")
+
         val sign = Dandelion.energy(data, salt)
+
         call.respond(APIResult(if (sign == null) -1 else 0, "success", sign?.toHexString() ?: "null"))
     }
 
@@ -40,6 +43,8 @@ fun Routing.energy() {
         })?.also {
             if (it.isBlank()) failure(-3, "无法自动决断mode，请主动提供")
         }
+
+        log("API请求(/energy): data = $data, mode = $mode")
 
         val salt = when (mode) {
             "v1" -> {

@@ -344,7 +344,7 @@ class MD5 {
         }
 
         fun byteHEX(b: Byte): String {
-            val cArr = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
+            val cArr = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f')
             return String(charArrayOf(cArr[b.toInt() ushr 4 and 15], cArr[b.toInt() and 15]))
         }
 

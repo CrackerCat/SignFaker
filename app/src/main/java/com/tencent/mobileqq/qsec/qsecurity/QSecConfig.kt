@@ -29,19 +29,19 @@ object QSecConfig {
 
     fun setupBusinessInfo(
         context: Context?,
-        str: String?,
-        str2: String,
-        str3: String?,
-        str4: String?,
-        str5: String,
-        str6: String
+        uin: String?,
+        guid: String,
+        seed: String?,
+        o3did: String?,
+        q36: String,
+        qua: String
     ) {
         sContext = context
-        business_qua = str6
-        business_uin = str
-        business_guid = str2
-        business_seed = str3
-        business_o3did = str4
-        business_q36 = str5
+        business_qua = qua
+        business_uin = uin
+        business_guid = guid
+        business_seed = seed
+        business_o3did = o3did
+        business_q36 = q36
     }
 }
